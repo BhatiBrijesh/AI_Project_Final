@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor and Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+*{margin: auto}
+      .mySlides {display:none;}
+    </style>
+
+    <style>
+        /* Add styles for the system monitor and control page */
+        body {
+           // background-image: url('/static/tablet.jpg');
+            
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed; /* New property */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+        }
+        
+        h1 {
+            color: blue;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+
+        .alarm {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            color: red;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: blink 1s infinite;
+        }
+        
+        .alarm1 {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            color: red;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: blink 1s infinite;
+        }
+
+        .startInspectionMessage {
+            position: fixed;
+            top: 5%;
+            right: 5%;
+            transform: translate(-50%, -50%);
+            background-color: lightgray;
+            color: green;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .flex-container{
+            display: flex;
+            margin-bottom: 40px;
+            align-items: flex-start;
+         }
+         .containerr{
+            display: flex;
+         }
+        .thc{
+            display: flex;
+            justify-content: space-between;
+        }
+        .vf{
+            width: auto!important;
+            justify-content: space-between;
+            margin-right: 50px;
+            
+        }
+        .th{
+            align-self:center ;
+            margin-right: 50px;
+        }
+        #temperatureChart{
+            border: solid 3px goldenrod;  
+            margin-right: 75px; 
+            background-color: black;
+        }
+
+         #humidityChart{
+            border: solid 3px goldenrod;  
+            margin-right: 75px;
+            background-color: black; 
+        }
+        .btnCI{
+            position: relative;
+            color: #FFFFFF;
+            text-align: center;
+            -webkit-transition-duration: 0.4s; 
+            transition-duration: 0.4s;
+            text-decoration: none;
+            overflow: hidden;
+
+            background-color: #f4511e;
+            border: none;
+            padding: 10px 25px;
+            text-align: center;
+            font-size: 16px;
+            margin: 4px 2px;
+            opacity: 1;
+            transition: 0.8s;
+	    cursor: pointer;
+         }
+         .btnCI:after {
+            content: "";
+            background: #e7cc07;
+            display: block;
+            position: absolute;
+            padding-top: 300%;
+            padding-left: 350%;
+            margin-left: -30px!important;
+            margin-top: -120%;
+            opacity: 0;
+            transition: all 0.9s
+            }
+
+            .btnCI:active:after {
+            padding: 0;
+            margin: 0;
+            opacity: 1;
+            transition: 0s
+            }
+        .btnCI:hover { background-color: blue }
+        .stopInspectionMessage {
+            position: fixed;
+            top: 5%;
+            right: 5%;
+            transform: translate(-50%, -50%);
+            background-color: lightgray;
+            color: red;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .temp-back{
+            background: rgb(238,174,202);
+            background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+        }
+        .temp-backk{
+            background: rgb(238,174,202);
+            background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+            height: 157px;
+            text-emphasis-position: 10px;
+        }
+        .setcount{
+            margin: 35px;
+        }
+ /* General styles */
+.slider {
+  width: 100%;
+  overflow: hidden;
+  margin: 25px 10px ;
+}
+
+.slides {
+  display: flex;
+  /* Calculate the duration based on the number of images (in this case, 6) */
+  animation: slide 25s linear infinite;
+}
+
+.slides img {
+  width: 100%;
+  height: auto;
+  margin-right: 5px;
+}
+
+/* Keyframes animation for sliding effect */
+@keyframes slide {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-150%); }
+}
+.line2{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    color: white;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            width: 1500px;
+}
+.end{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    margin: 20px;
+    color: white;
+            font-size: 36px;
+            text-align: center;
+            padding: 10px;
+            width: 1500px;
+}
+.end2{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    margin: 10px;
+    color: white;
+            font-size: 2px;
+            text-align: center;
+            padding: 10px;
+            width: 1500px;
+}
+.endd{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    margin: 0px 20px;
+    margin-bottom: 25px;
+    color: white;
+            font-size: 42px;
+            text-align: center;
+            padding: 10px;
+            width: 1500px;
+            font-weight: 800;
+}
+.minhum{
+    height: fit-content;
+    width: fit-content;
+    border-radius: 7px ;
+    padding: 5px;
+    border: 2px solid white;
+    background: rgb(238,174,202);
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+}
+.card {
+  box-shadow: 0 44px 48px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: 40%;
+  align-self: center;
+  margin: 30px 30px;
+  align-items: center;
+  text-size-adjust: 25px;
+  background-color: whitesmoke;
+}
+
+.card:hover {
+  box-shadow: 0 8px 6px 0 rgba(0,0,0,0.2);
+}
+
+.container {
+  padding: 5px 16px;
+  margin: 5px 5px;
+}
+.insider{
+    margin: 15px 5px;
+}
+        input[type=number] {
+          
+          margin-top: 20px;
+          border-radius: 20px;
+          width: 50vb;
+          height: 30px;
+        }
+
+        
+
+        .startInspectionMessage, .stopInspectionMessage {
+            font-size: 22px;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Add your existing CSS styles here */
+
+    </style>
+</head>
+<body>
+    <div class="endd">
+        <span>System Monitor and Control</span>
+    </div>
+<div class="flex-container">
+      <div class="vf">
+         <h2>Video Feed</h2>
+        <img src="{{ url_for('video_feed') }}" width="640" height="480" alt="Video Feed" />
+    </div>
+    <div>
+        <h2>Contour Feed</h2>
+        <img src="{{ url_for('contours_feed') }}" width="640" height="480" alt="Contour Feed" />
+    </div>
+</div>
+    <br>
+    <div>
+        <button class="btnCI"onclick="startCamera()">Start Camera</button>
+        <button class="btnCI"onclick="startInspection()">Start Inspection</button>
+        <button class="btnCI"onclick="stopCamera()">Stop Camera</button>
+        <button class="btnCI"onclick="stopInspection()">Stop Inspection</button>
+    </div>
+
+    <div class="end2">
+        <span> . </span>
+    </div>
+<div class="flex-container">
+    <div class="vf">
+        <h2>Latest Captured Image</h2>
+        <img id="capturedImage" src="" width="320" height="240" alt="Latest Captured Image" />
+        <button class="btnCI" onclick="captureImage()">Capture Image</button>
+    </div>
+    <div class="card">
+        <div class="container">
+        <h2>System Parameters</h2>
+        <div class="insider">
+        <h4>Actual Temperature: <span id="actualTemp">-</span></h4>
+        </div>
+        <div class="insider">
+        <h4>Actual Humidity: <span id="actualHumi">-</span></h4>
+        </div>
+        <div class="insider">
+        <h4>Servo Motor Status: <span id="servoStatus">-</span></h4>
+        </div>
+        <div class="insider">
+        <h4>DC Motor Status: <span id="DCmotorStatus">-</span></h4>
+        </div>
+        <button class="btnCI"onclick="LEDcount()">Get Product Count</button>
+        </div>
+    </div>
+
+    <div>
+        <h2>Latest Processed Image</h2>
+        <img id="processedImage" src="" width="320" height="240" alt="Latest Processed Image" />
+        <button class="btnCI"onclick="processImage()"> Process Image </button>
+    </div>
+</div>
+
+<div class="end2">
+    <span> . </span>
+</div>
+
+<div class="thc">
+    <div class="temp-back">
+        <label class="minhum"for="minTemp">Minimum Temperature:</label>
+        <input type="number" id="minTemp" name="minTemp">
+        <label class="minhum"for="maxTemp">  MaximumTemperature:</label>
+        <input type="number" id="maxTemp" name="maxTemp">
+        <button class="btnCI"onclick="setTemperature()">Set Temperature</button>
+    </div>
+    <div class="temp-back">
+        <label class="minhum" for="minHumi">Minimum Humidity:</label>
+        <input type="number" id="minHumi" name="minHumi">
+        <label class="minhum"for="maxHumi">Maximum Humidity:</label>
+        <input type="number" id="maxHumi" name="maxHumi">
+        <button class="btnCI"onclick="setHumidity()">Set Humidity</button>
+    </div>
+    <div class="temp-backk">
+    <div class="setcount">
+        <label  class="minhum" for="setcount">Set Product Count:</label>
+        <input type="number" id="setcount" name="setcount">
+        <button class="btnCI"onclick="setProductcount()">Set Product Count</button>
+    </div>
+    </div>      
+</div> 
+    <div>
+      
+        <p id="tempAlarm" class="alarm" style="display: none;">Temperature is out of range</p>
+        <p id="humiAlarm" class="alarm1" style="display: none;">Humidity is out of range</p>
+
+        <p id="startInspectionMessage" class="startInspectionMessage" style="display: none;">Inspection started</p>
+        <p id="stopInspectionMessage" class="stopInspectionMessage" style="display: none;">Inspection stopped</p>
+    </div>
+    <div class="end2">
+        <span> . </span>
+    </div>
+    <div class="slider">
+        <div class="slides">
+          <img src="/static/abc.jpg" alt="Image 1">
+          <img src="/static/capsule1.jpg" alt="Image 2">
+          <img src="/static/tablet1.jpg" alt="Image 3">
+          <img src="/static/image1.jpg" alt="Image 4">
+          <!-- Duplicate the images to ensure continuous looping -->
+          <img src="/static/abc.jpg" alt="Image 1">
+          <img src="/static/capsule1.jpg" alt="Image 2">
+          <img src="/static/tablet1.jpg" alt="Image 3">
+          <img src="/static/image1.jpg" alt="Image 4">
+        </div>
+      </div>
+      
+<div class="line2">      
+    <span> REAL TIME MONITORING OF TEMPERATURE AND HUMIDITY</span>
+</div>
+<div class="containerr">
+</br>
+<div>
+    <h2>Temperature Trend</h2>
+    <canvas id="temperatureChart" width="640" height="480"></canvas>
+</div>
+<div>
+    <h2>Humidity Trend</h2>
+    <canvas id="humidityChart" width="640" height="480"></canvas>
+</div>
+</div>
+<div class="end">
+    <span> Sheridan College </span>
+</div>
+    <script>
+
+        //const initialTemperatureData = [20, 22, 23, 21, 24, 25, 26, 27, 28, 30, 29, 27, 26, 24, 23, 22, 20];
+ // const initialHumidityData = [40, 42, 43, 41, 44, 45, 46, 47, 48, 50, 49, 47, 46, 44, 43, 42, 40];
+        const maxDataPoints = 20; // Maximum number of data points to be shown on the graph
+        let temperatureData = new Array(maxDataPoints).fill(null);
+        const maxDataPoints1 = 20;
+        let humidityData = new Array(maxDataPoints1).fill(null);
+        let previousTimestamp = null;
+        let temperatureChart = null; // Chart instance
+        let humidityChart = null; // Chart instance for humidity
+
+
+        // Function to update the temperature data
+        function updateTemperatureData(temperature, timestamp) {
+            if (timestamp !== previousTimestamp) {
+                temperatureData.push(temperature);
+                temperatureData.shift(); // Remove the oldest data point
+                previousTimestamp = timestamp;
+
+                drawTemperatureChart(); // Redraw the chart with updated data
+            }
+        }
+
+
+// Function to draw the temperature trend chart
+        function drawTemperatureChart() {
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+            const labels = temperatureData.map((_, index) => formatTime(Date.now() - (maxDataPoints - 1 - index) * 1000));
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temperatureData,
+                    borderColor: 'rgba(255, 255, 255, 1)',
+                    borderWidth: 1,
+                    fill: true,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)', // White color with opacity for the fill area
+                    tension: 0.1,
+                }]
+            };
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    animation: {
+                        duration: 0 // Disable animations for real-time updates
+                    },
+                    scales: {
+                        x: {
+                           // display: false, // Hide the x-axis labels
+                            //grid: {
+                               // display: false, // Hide x-axis grid lines},
+                           ticks: {
+                                color: 'white', // White color for x-axis tick labels
+                            }
+                    
+                            
+                        },
+                        y: {
+                            min: 0, // Minimum value for the y-axis
+                            max: 32, // Maximum value for the y-axis
+                            ticks: {
+                                stepSize: 0.3, // Set the step size for the y-axis
+                                callback: function(value) {
+                                    return value + '°C'; // Append the degree symbol to the tick labels
+                                },
+                           fontColor: 'rgba(255, 255, 255, 1)', // White color for the y-axis tick labels
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)', // White color with opacity for the y-axis grid lines
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 1)', // White color for the legend text
+                            }
+                            
+                        }
+                    }
+                }
+            };
+
+            if (temperatureChart) {
+                // If the chart instance exists, update its data
+                temperatureChart.data = data;
+                temperatureChart.update();
+            } else {
+                // If the chart instance doesn't exist, create a new chart
+                temperatureChart = new Chart(ctx, config);
+            }
+        }
+
+        
+
+        // Function to update the humidity data
+      
+        // Function to convert timestamp to time format (HH:mm:ss)
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+  function formatTime1(timestamp) {
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+        
+
+
+        // Function to draw the humidity trend chart
+         function updateHumidityData(humidity, timestamp) {
+            if (timestamp !== previousTimestamp) {
+               humidityData.push(humidity);
+               // humidityData = [...humidityData, humidity];
+                humidityData.shift(); // Remove the oldest data point
+                previousTimestamp = timestamp;
+                drawHumidityChart(); // Redraw the humidity chart with updated data
+            }
+        }
+
+
+function drawHumidityChart() {
+            const ctx = document.getElementById('humidityChart').getContext('2d');
+            const labels = humidityData.map((_, index) => formatTime1(Date.now() - (maxDataPoints1 - 1 - index) * 1000));
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: humidityData,
+                    borderColor: 'rgba(255, 255, 255, 1)',
+                    borderWidth: 1,
+                    fill: true,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)', // White color with opacity for the fill area
+                    tension: 0.1,
+                }]
+            };
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    animation: {
+                        duration: 0 // Disable animations for real-time updates
+                    },
+                    scales: {
+                        x: {
+                           // display: false, // Hide the x-axis labels
+                            //grid: {
+                               // display: false, // Hide x-axis grid lines},
+                           ticks: {
+                                color: 'white', // White color for x-axis tick labels
+                            }
+                            
+                        },
+                        y: {
+                            min: 0, // Minimum value for the y-axis
+                            max: 100, // Maximum value for the y-axis
+                            ticks: {
+                                stepSize: 1, // Set the step size for the y-axis
+                                callback: function(value) {
+                                    return value + '%'; // Append the degree symbol to the tick labels
+                                },
+                           fontColor: 'rgba(255, 255, 255, 1)', // White color for the y-axis tick labels
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)', // White color with opacity for the y-axis grid lines
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 1)', // White color for the legend text
+                            }
+                            
+                        }
+                    }
+                }
+            };
+
+            if (humidityChart) {
+                // If the chart instance exists, update its data
+                humidityChart.data = data;
+                humidityChart.update();
+            } else {
+                // If the chart instance doesn't exist, create a new chart
+                humidityChart = new Chart(ctx, config);
+            }
+        }
+
+
+// Replace the existing setInterval for getTemperatureAndHumidity with this one
+    // Function to fetch and update actual temperature and draw the chart
+
+function fetchTemperatureAndHumidity() {
+    return fetch('/get_temperature_and_humidity')
+      .then(response => response.json())
+      .catch(error => console.log(error));
+  }
+
+  // Function to update temperature data and draw the temperature chart
+  function updateTemperatureAndDrawChart() {
+    fetchTemperatureAndHumidity().then(data => {
+      const { temperature } = data;
+      const timestamp = Date.now();
+      updateTemperatureData(temperature, timestamp);
+      drawTemperatureChart();
+    });
+  }
+
+  // Function to update humidity data and draw the humidity chart
+  function updateHumidityAndDrawChart() {
+    fetchTemperatureAndHumidity().then(data => {
+      const { humidity } = data;
+      const timestamp1 = Date.now();
+      updateHumidityData(humidity, timestamp1);
+      drawHumidityChart();
+    });
+  }
+
+// Function to update humidity data and draw the humidity chart
+  function updateHumidityAndTemperature() {
+    fetchTemperatureAndHumidity().then(data => {
+      const { temperature, humidity } = data;
+      updateActualTempAndHumi(temperature, humidity);
+    });
+  }
+
+  // ... Your existing code
+
+  // Initial call to update data and draw both charts
+  updateTemperatureAndDrawChart();
+  updateHumidityAndDrawChart();
+
+  // Set interval to update the temperature data and redraw the temperature chart every 1000ms (1 second)
+  setInterval(updateTemperatureAndDrawChart, 1000);
+
+  // Set interval to update the humidity data and redraw the humidity chart every 1000ms (1 second)
+  setInterval(updateHumidityAndDrawChart, 1000);
+
+setInterval(updateHumidityAndTemperature, 1000);
+
+
+        function LEDcount() {
+            fetch('/blink')
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
+        }
+
+        function captureImage() {
+            fetch('/capture_image')
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
+        }
+
+        function processImage() {
+            fetch('/process_image')
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
+        }
+
+        function startCamera() {
+            fetch('/start_camera')
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
+        }
+
+        function startInspection() {
+            fetch('/startinspection')
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    // Display "Inspection started" message
+                    document.getElementById('startInspectionMessage').style.display = 'block';
+                    // Hide "Inspection stopped" message
+                    document.getElementById('stopInspectionMessage').style.display = 'none';
+                })
+                .catch(error => console.log(error));
+        }
+
+        function stopInspection() {
+            fetch('/stopinspection')
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    // Display "Inspection stopped" message
+                    document.getElementById('stopInspectionMessage').style.display = 'block';
+                    // Hide "Inspection started" message
+                    document.getElementById('startInspectionMessage').style.display = 'none';
+                })
+                .catch(error => console.log(error));
+        }
+
+        function stopCamera() {
+            fetch('/stop_camera')
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
+        }
+
+        function setTemperature() {
+      const minTemp = document.getElementById('minTemp').value;
+      const maxTemp = document.getElementById('maxTemp').value;
+      const url = '/set_temperature';
+
+      const data = { min: minTemp, max: maxTemp };
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then(response => response.text())
+        .then(data => console.log(data))
+        .catch(error => console.log(error));
+    }
+       
+       function setHumidity() {
+      const minHumi = document.getElementById('minHumi').value;
+      const maxHumi = document.getElementById('maxHumi').value;
+      const url = '/set_humidity';
+
+      const data1 = { min: minHumi, max: maxHumi };
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data1),
+      })
+        .then(response => response.text())
+        .then(data1 => console.log(data1))
+        .catch(error => console.log(error));
+    }
+
+    function setProductcount() {
+      const setcount = document.getElementById('setcount').value;
+      const url = '/set_productcount';
+
+      const data2 = { productcount: setcount};
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data2),
+      })
+        .then(response => response.text())
+        .then(data2 => console.log(data2))
+        .catch(error => console.log(error));
+    }
+
+
+    function updateActualTempAndHumi(temp, humi) {
+            document.getElementById('actualTemp').textContent = temp;
+            document.getElementById('actualHumi').textContent = humi;
+
+            // Get min and max values from input fields
+            const minTemp = parseFloat(document.getElementById('minTemp').value);
+            const maxTemp = parseFloat(document.getElementById('maxTemp').value);
+            const minHumi = parseFloat(document.getElementById('minHumi').value);
+            const maxHumi = parseFloat(document.getElementById('maxHumi').value);
+
+            // Check if actual temperature is out of range and set red color alarm
+            if (temp < minTemp || temp > maxTemp) {
+                document.getElementById('actualTemp').style.color = 'red';
+                document.getElementById('tempAlarm').style.display = 'block';
+            } else {
+                document.getElementById('actualTemp').style.color = 'black';
+                document.getElementById('tempAlarm').style.display = 'none';
+            }
+
+            // Check if actual humidity is out of range and set red color alarm
+            if (humi < minHumi || humi > maxHumi) {
+                document.getElementById('actualHumi').style.color = 'red';
+                document.getElementById('humiAlarm').style.display = 'block';
+            } else {
+                document.getElementById('actualHumi').style.color = 'black';
+                document.getElementById('humiAlarm').style.display = 'none';
+            }
+        }
+
+    
+
+    // Function to set the servo motor status and update button colors
+    function set(status) {
+        const statusElement = document.getElementById('servoStatus');
+        if (status) {
+            statusElement.textContent = 'ON';
+            statusElement.style.color = 'green';
+
+        } else {
+            statusElement.textContent = 'OFF';
+            statusElement.style.color = 'red';
+        }
+    }
+
+     // Function to set the DC motor status and update button colors
+    function setDCmotor(status) {
+        const statusElement = document.getElementById('DCmotorStatus');
+        if (status) {
+            statusElement.textContent = 'ON';
+            statusElement.style.color = 'green';
+
+        } else {
+            statusElement.textContent = 'OFF';
+            statusElement.style.color = 'red';
+        }
+    }
+        
+
+        // Fetch the initial servo motor status from the backend when the page loads
+    function getServoStatus() {
+        fetch('/get_servo_status')
+            .then(response => response.json())
+            .then(data => {
+                //const servoStatus = data;
+                const servoStatus = data.servoStatus;
+                set(servoStatus);
+            })
+            .catch(error => console.log(error));
+    }
+
+     // Fetch the initial servo motor status when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            getServoStatus();
+            // Update the servo motor status every 2 seconds (adjust this as needed)
+            setInterval(getServoStatus, 500);
+        });
+
+
+         // Fetch the initial DC motor status from the backend when the page loads
+    function getDCmotorStatus() {
+        fetch('/get_DCmotor_status')
+            .then(response => response.json())
+            .then(data => {
+                //const DCmotorStatus = data;
+                const MotorStatus = data.MotorStatus;
+                setDCmotor(MotorStatus);
+            })
+            .catch(error => console.log(error));
+    }
+
+     // Fetch the initial servo motor status when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            getDCmotorStatus();
+            // Update the servo motor status every 2 seconds (adjust this as needed)
+            setInterval(getDCmotorStatus, 500);
+        });
+
+
+        function getProductCount() {
+            fetch('/get_product_count')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('productCount').textContent = 'Product Count: ' + data;
+                })
+                .catch(error => console.log(error));
+        }
+
+        function getLatestCapturedImage() {
+            fetch('/latest_captured_image')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('capturedImage').src = '/latest_captured_image';
+                    }
+                })
+                .catch(error => console.log(error));
+        }
+
+        function getLatestProcessedImage() {
+            fetch('/latest_processed_image')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('processedImage').src = '/latest_processed_image';
+                    }
+                })
+                .catch(error => console.log(error));
+        }
+
+        // Update the product count every 1 second
+        setInterval(getProductCount, 1000);
+
+        // Update the latest captured image every 1 second
+        setInterval(getLatestCapturedImage, 1000);
+
+        // Update the latest processed image every 1 second
+        setInterval(getLatestProcessedImage, 1000);
+
+        //setInterval(getTemperatureAndHumidity, 1000);
+        //setInterval(getServoStatus, 200);
+
+       // setInterval(function setTemperature, 1000);
+    </script>
+    
+</body>
+</html>
